@@ -1,0 +1,414 @@
+
+//temperature
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int main()
+{
+    int n; // the number of temperatures to analyse
+    cin >> n; cin.ignore();
+    
+    int y, x =0;
+
+    for (int i = 0; i < n; i++) {
+        int t; // a temperature expressed as an integer ranging from -273 to 5526
+        cin >> t; cin.ignore();
+        if (i == 0)
+        {
+            y = t;
+        }
+        else
+        {
+            if (-y == t && t > 0)
+            {
+                y = t;
+            }
+            else
+            {
+                x = t < 0 ? -t : t;
+                y = (( y < 0 && x < -y ) || x < y) ? t : y;
+            }
+        }
+    
+    }
+
+    // Write an answer using cout. DON'T FORGET THE "<< endl"
+    // To debug: cerr << "Debug messages..." << endl;
+
+    cout << y << endl;
+}
+
+//La descente
+#include <iostream>
+#include <iterator>
+#include <string>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+/**
+ * The while loop represents the game.
+ * Each iteration represents a turn of the game
+ * where you are given inputs (the heights of the mountains)
+ * and where you have to print an output (the index of the mountain to fire on)
+ * The inputs you are given are automatically updated according to your last actions.
+ **/
+
+int main()
+{
+    vector<int> tab_mountains;
+    vector<int>::iterator itb;
+    vector<int>::iterator ite;
+    vector<int>::iterator max;
+    int dist =0;
+    // game loop
+    while (1) {
+        tab_mountains.clear();
+        for (int i = 0; i < 8; i++) {
+            int mountain_h; // represents the height of one mountain.
+            cin >> mountain_h; cin.ignore();
+            tab_mountains.push_back(mountain_h);
+
+        }
+        itb = tab_mountains.begin();
+        ite = tab_mountains.end();
+        max = max_element(itb, ite);
+        dist = distance(itb, max);
+        tab_mountains.erase(max);
+        
+        // Write an action using cout. DON'T FORGET THE "<< endl"
+        // To debug: cerr << "Debug messages..." << endl;
+        cout << dist << endl;
+
+    }
+}
+
+// power of thor
+
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+/**
+ * Solve this puzzle by writing the shortest code.
+ * Whitespaces (spaces, new lines, tabs...) are counted in the total amount of chars.
+ * These comments should be burnt after reading!
+ **/
+
+ 
+ int main()
+ {
+    int lightX; // the X position of the light of power
+    int lightY; // the Y position of the light of power
+    int initialTX; // Thor's starting X position
+    int initialTY; // Thor's starting Y position
+    cin >> lightX >> lightY >> initialTX >> initialTY; cin.ignore();
+
+    string directionX, directionY = "";
+    int thorX = initialTX;
+    int thorY = initialTY;
+
+    // game loop
+    while (1) {
+        int remaining_turns; // The level of Thor's remaining energy, representing the number of moves he can still make.
+        cin >> remaining_turns; cin.ignore();
+
+        directionX = ( thorX > lightX ) ? "W" : ( thorX == lightX ) ? "" : "E";
+        thorX = directionX == "W" ? thorX - 1 : directionX == "" ? thorX : thorX + 1;
+
+        directionY = ( thorY > lightY ) ? "N" : ( thorY == lightY ) ? "" : "S";
+        thorY = directionY == "N" ? thorY - 1: directionY == "" ? thorY : thorY + 1;
+
+        
+        // Write an action using cout. DON'T FORGET THE "<< endl"
+        // To debug: cerr << "Debug messages..." << endl;
+
+        // A single line providing the move to be made: N NE E SE S SW W or NW
+        cout << directionY << directionX << endl;
+    }
+}
+
+//ASCII Art
+
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+//chiers, les extensions et les types MIME.
+/**
+ * Auto-generated code below aims at helping you parse
+ * the standard input according to the problem statement.
+ **/
+
+int main()
+{
+    int l;
+    cin >> l; cin.ignore();
+    int h;
+    cin >> h; cin.ignore();
+
+    string t;
+    getline(cin, t);
+        
+    for (int i = 0; i < h; i++)
+    {
+        string result = "";
+        string row;
+        getline(cin, row);
+        
+        for (int x = 0; x < t.size(); x++)
+        {
+            int index = (int)toupper(t[x]) - 'A' ;
+            index = (index < 0 || index > 26) ? 26 : index;
+            
+            for (int y = 0; y < l; y++)
+            {
+                result += row[(index * l) + y];
+            }
+        }
+        cout << result << endl;
+    }
+    
+    // Write an answer using cout. DON'T FORGET THE "<< endl"
+    // To debug: cerr << "Debug messages..." << endl;
+
+}
+
+
+//MYMTYPE 
+#include <cctype>
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <map>
+
+using namespace std;
+
+/**
+ * Auto-generated code below aims at helping you parse
+ * the standard input according to the problem statement.
+ **/
+
+int main()
+{
+    int n; // Number of elements which make up the association table.
+    cin >> n; cin.ignore();
+    int q; // Number Q of file names to be analyzed.
+    cin >> q; cin.ignore();
+    cerr << n << " n" << endl;
+    map<string, string> coucou;
+
+
+    for (int i = 0; i < n; i++) {
+        string ext; // file extension
+        string mt; // MIME type.
+        cin >> ext >> mt; cin.ignore();
+        string new_ext = "";
+        for (int y = 0; y < ext.length(); y++)
+        {
+            new_ext += tolower(ext[y]);
+        }
+        coucou[new_ext] = mt;
+    }
+    
+    string isExt = "";
+    string fname;
+    string new_fname = "";
+    map<string, string>::iterator it;
+    for (int i = 0; i < q; i++) {
+
+        new_fname = "";
+        isExt = "";
+        getline(cin, fname); // One file name per line.
+        for (int y = 0; y < fname.length(); y++)
+        {
+            new_fname += tolower(fname[y]);
+        }
+
+        int pos = new_fname.find_last_of(".");
+        if (pos != -1)
+        {
+            for (; ++pos != new_fname.length(); )
+            {
+                isExt += new_fname[pos];
+            }
+
+            it = coucou.find(isExt);
+            if (it != coucou.end())
+            {
+                cout << it->second << endl;
+            }
+            else
+            {
+                cout << "UNKNOWN" << endl;
+            }
+        }
+        else
+        {
+            cout << "UNKNOWN" << endl;
+        }
+    }
+
+    // Write an answer using cout. DON'T FORGET THE "<< endl"
+    // To debug: cerr << "Debug messages..." << endl;
+
+
+    // For each of the Q filenames, display on a line the corresponding MIME type. If there is no corresponding type, then display UNKNOWN.
+    // cout << "UNKNOWN" << endl;
+}
+
+//defbibrillator
+
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <sstream>
+#include <cmath>
+using namespace std;
+
+/**
+ * Auto-generated code below aims at helping you parse
+ * the standard input according to the problem statement.
+ **/
+
+int main()
+{
+    string lon;
+    cin >> lon; cin.ignore();
+    string lat;
+    cin >> lat; cin.ignore();
+    int n;
+    cin >> n; cin.ignore();
+    cerr << lon << " " << lat  << endl;
+    string name = "";
+    int posX = 0;
+    int posY = 0;
+    int pos = 0;
+    double maxd;
+    
+    for (int i = 0; i < n; i++)
+    {
+        string defib;
+        getline(cin, defib);
+        cerr << defib << endl;
+        //distance y
+        string latB = "";
+        posY = defib.find_last_of(';');
+        for (int temp = posY + 1; temp < defib.length() && defib[temp] != ';'; temp++)
+        {
+            if (defib[temp] == ',')
+            {
+                latB += ".";
+            }
+            else
+            {
+                latB += defib[temp];
+            }
+        }
+        
+        //distance x
+        string lonB = "";
+        posX = defib.find_last_of(';', posY - 1);
+        for (int temp = posX + 1; temp < defib.length()  && defib[temp] != ';'; temp++)
+        {
+            if (defib[temp] == ',')
+            {
+                lonB += ".";
+            }
+            else
+            {
+                lonB += defib[temp];
+            }
+        }
+        cerr << "coucou lonB " << lonB << " latB " << latB << endl;
+
+        stringstream ssLonB(lonB);
+        stringstream ssLatB(latB);
+        string new_lon, new_lat = "";
+
+        for (int temp = 0; temp < lon.length(); temp++)
+        {
+            if (lon[temp] == ',')
+            {
+                new_lon += ".";
+            }
+            else
+            {
+                new_lon += lon[temp];
+            }
+        }
+        stringstream ssLonA(new_lon);
+        
+        for (int temp = 0; temp < lat.length(); temp++)
+        {
+            if (lat[temp] == ',')
+            {
+                new_lat += ".";
+            }
+            else
+            {
+                new_lat += lat[temp];
+            }
+        }
+        stringstream ssLatA(new_lat);
+        
+        double PI = 3.1415;
+        double xB, yB, xA, yA, d, x, y; 
+        
+        //converti en float
+        ssLonB >> xB;
+        ssLonA >> xA;
+        ssLatB >> yB;
+        ssLatA >> yA;
+
+        // On convertit tout en RADIANS
+        double xA_rad = xA * PI / 180.0;
+        double xB_rad = xB * PI / 180.0;
+        double yA_rad = yA * PI / 180.0;
+        double yB_rad = yB * PI / 180.0;
+
+        x = (xB_rad - xA_rad) * cos((yA_rad + yB_rad)/2) ;
+        y = yB_rad - yA_rad;
+        d = sqrt((x*x) + (y*y)) * 6371;
+        cerr << "--> " << d << endl;
+
+        if (i == 0)
+        {
+            maxd = d;
+            //name
+            pos = defib.find(';');
+            for (; ++pos < defib.length() && defib[pos] != ';'; )
+            {
+                name += defib[pos];
+            }
+        }
+        else if (d < maxd)
+        {
+            maxd = d;
+            pos = defib.find(';');
+            name = "";
+            for (; ++pos < defib.length() && defib[pos] != ';'; )
+            {
+                name += defib[pos];
+            }
+        }
+
+    }
+
+    // Write an answer using cout. DON'T FORGET THE "<< endl"
+    // To debug: cerr << "Debug messages..." << endl;
+
+    cout << name << endl;
+}

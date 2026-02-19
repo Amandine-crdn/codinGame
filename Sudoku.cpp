@@ -1,87 +1,20 @@
 //grille 
 #include "Sudoku.hpp"
-// #include "raylib.h"
-#include <curses.h>
-#include <locale.h>
-#define KEY_ESC 27
 
-void Sudoku::get_grid(bool isInMenu, int cursorX = 0, int cursorY = 0)
+void Sudoku::init_grid()
 {
-    refresh();
-    clear();
-    move(0,0);
-    // Style du titre
-    attron(A_BOLD |A_UNDERLINE | COLOR_PAIR(2)); // Titre en vert par exemple
-    printw("    MASTER SUDOKU   \n\n"); 
-    attroff(A_BOLD | A_UNDERLINE | COLOR_PAIR(2));
+    this->grid.cursorGrid.x = 0;
+    this->grid.cursorGrid.y = 0;
 
-
-
-    int x = 0;
-    int y = 0;
-
-    for (Box box: this->grid.cell)
-    {
-        if (x == 0 && y == 0) printw(" _________________\n");
-        if (x == 0) printw("|");
-        
-        if (box.coordonnes.x == cursorX && box.coordonnes.y == cursorY)
-        {
-            if (isInMenu) attron(COLOR_PAIR(3) | A_BOLD);
-            else attron(COLOR_PAIR(1) | A_REVERSE);
-
-            if (box.answer == 0) printw(" ");
-            else printw("%d", box.answer);
-            
-            if (isInMenu) attroff(COLOR_PAIR(3) | A_BOLD);
-            else attroff(COLOR_PAIR(1) | A_REVERSE);
-        }
-        else
-        {
-            if (box.answer == 0) printw(" ");
-            else printw("%d", box.answer);
-        }
-        
-        x++;
-        printw((x % 3 == 0) ? "|" : " ");
-        if (x == 9)
-        {
-            printw("\n");
-            x = 0;
-            y++;
-            if (y % 3 == 0) printw(" _________________\n");
-        }
-    }
-    refresh();
-}
-
-
-
-vector<int> easy_grid = {
-    5, 3, 0,  0, 7, 0,  0, 0, 0,  // Ligne 1
-    6, 0, 0,  1, 9, 5,  0, 0, 0,  // Ligne 2
-    0, 9, 8,  0, 0, 0,  0, 6, 0,  // Ligne 3
-    
-    8, 0, 0,  0, 6, 0,  0, 0, 3,  // Ligne 4
-    4, 0, 0,  8, 0, 3,  0, 0, 1,  // Ligne 5
-    7, 0, 0,  0, 2, 0,  0, 0, 6,  // Ligne 6
-    
-    0, 6, 0,  0, 0, 0,  2, 8, 0,  // Ligne 7
-    0, 0, 0,  4, 1, 9,  0, 0, 5,  // Ligne 8
-    0, 0, 0,  0, 8, 0,  0, 7, 9   // Ligne 9
-};
-
-
-void Sudoku::init_grid(vector<int> grid)
-{
     Box box;
     Point localization;
     localization.x = 0;
     localization.y = 0;
 
-    for (int c: grid)
+    for (int c: levelGrid)
     {
         box.answer = c;
+        box.canDelete = c == 0 ? true : false; //chiffre donner au depart vide
         box.coordonnes = localization;
         this->grid.cell.push_back(box);
         localization.x++;
@@ -93,136 +26,245 @@ void Sudoku::init_grid(vector<int> grid)
     } 
 }
 
-void init_game()
+// void Menu2(Sudoku &sdk)
+// {
+//     sdk.showGrid(true, sdk.grid.cursorGrid.x, sdk.grid.cursorGrid.y);
+//     curs_set(1);
+//     int cursorGrid.x = 5;
+//     int cursorGrid.y = 30;
+
+//     showMenu2();
+//     int number = -1;
+//     while (true)
+//     {
+//         refresh();
+//         int key = getch(); // On attend la saisie
+        
+//         if (key == KEY_UP && cursorGrid.x > 5)
+//         {
+//             cursorGrid.x--;
+//             if (cursorGrid.x == 6) cursorGrid.x--;
+//         }
+//         if (key == KEY_DOWN && cursorGrid.x < 9)
+//         {
+//             cursorGrid.x++;
+//             if (cursorGrid.x == 6) cursorGrid.x++;
+//         }
+//         cursorGrid.y = cursorGrid.x == 5 ? 57 : 30;
+//         if ('0' < key  && key < '9' && cursorGrid.x == 5)
+//         {
+//             printw("%c", char(key));
+//             number = key;
+//         }
+//         if (key == 10 && number != -1)
+//         {
+//             sdk.replace(number);
+//             return ;
+//         }
+//         move(cursorGrid.x, cursorGrid.y);
+
+//         if (key =='q')
+//         {
+//             return; // quitte la deuxime fois
+//         }
+//     }
+//     curs_set(0);
+// }
+
+void Sudoku::showGrid(bool isInMenu)
 {
-    setlocale(LC_ALL, ""); // Pour supporter les caractères spéciaux comme les lignes de ta grille
-    initscr();             // Initialise la mémoire de l'écran
-    start_color();
-    init_pair(1, COLOR_WHITE, COLOR_BLACK);   // Curseur normal
-    init_pair(2, COLOR_GREEN, COLOR_BLACK);   // Bon (Chiffre vert)
-    init_pair(3, COLOR_WHITE, COLOR_MAGENTA); // Mode saisie (Rose)
-    init_pair(4, COLOR_RED, COLOR_BLACK);     // Erreur (Chiffre rouge)
- 
-    // --- LE SECRET EST ICI ---
-    wbkgd(stdscr, COLOR_PAIR(1)); // Applique le fond noir à toute la fenêtre
-    attron(COLOR_PAIR(1));        // Active la couleur blanche sur noir par défaut
-    erase();                      // Remplit virtuellement tout l'écran avec la couleur de fond
-    refresh();                    // Envoie l'instruction au terminal immédiatement
-    // -------------------------
+    refresh();
+    clear();
+    // Style du titre
+    attron(A_BOLD |A_UNDERLINE | COLOR_PAIR(2)); // Titre en vert par exemple
+    mvprintw(0, 0, "    MASTER SUDOKU   \n\n"); 
+    attroff(A_BOLD | A_UNDERLINE | COLOR_PAIR(2));
+
+    int x = 0;
+    int y = 0;
+
+    for (Box box: this->grid.cell)
+    {
+        if (x == 0 && y == 0) printw("  _________________\n");
+        if (x == 0) printw(" |");
+        
+        if (box.coordonnes.x == this->grid.cursorGrid.x && box.coordonnes.y == this->grid.cursorGrid.y)
+        {
+            // if (isInMenu) attron(COLOR_PAIR(3) | A_BOLD);
+            if (box.coordonnes.y == 8 || box.coordonnes.y == 5 || box.coordonnes.y == 2) attron(COLOR_PAIR(1) | A_BOLD | A_UNDERLINE | A_REVERSE);
+            else attron(COLOR_PAIR(1) | A_BOLD | A_REVERSE);
+            
+            if (box.answer == 0) printw(" ");
+            else printw("%d", box.answer);
+            
+            // if (isInMenu) attroff(COLOR_PAIR(3) | A_BOLD);
+            if (box.coordonnes.y == 8 || box.coordonnes.y == 5 || box.coordonnes.y == 2) attroff(COLOR_PAIR(1) | A_BOLD | A_UNDERLINE | A_REVERSE);
+            else attroff(COLOR_PAIR(1) | A_BOLD | A_REVERSE);
+
+        }
+        else if (y == 8 || y == 5 || y == 2)
+        {
+            attron(COLOR_PAIR(1) | A_UNDERLINE);
+            if (box.answer == 0) printw(" ");
+            else printw("%d", box.answer);
+            attroff(COLOR_PAIR(1) | A_UNDERLINE);
+        }
+        else
+        {
+            if (box.answer == 0) printw(" ");
+            else printw("%d", box.answer);
+        }
+        x++;
+        printw((x % 3 == 0) ? "|" : " ");
     
-    cbreak();              // Reçoit les touches immédiatement sans attendre 'Entrée'
-    noecho();              // Empêche l'affichage des touches pressées sur l'écran
-    keypad(stdscr, TRUE);  // MAGIE : Permet d'utiliser KEY_UP, KEY_DOWN, etc.
-    curs_set(0);           // Cache le curseur clignotant du terminal (optionnel)
+        if (x == 9)
+        {
+            printw("\n");
+            x = 0;
+            y++;
+        }
+    }
+    refresh();
 }
 
-void replace(int key,Sudoku &sdk)
+void Sudoku::actionsHypothetical(int key)
 {
-    int x = sdk.grid.cursorX;
-    int y = sdk.grid.cursorY;
-
-    int index = y * 9 + x;
-
-    sdk.grid.cell[index].answer = key - '0'; // Convertit le caractère '5' en chiffre 5
-    
+    int x = this->grid.cursorGrid.x;
+    int y = this->grid.cursorGrid.y;
+    if (key == KEY_UP ) this->grid.cursorGrid.y--;
+    if (key == KEY_DOWN ) this->grid.cursorGrid.y++;
+    if (key == KEY_RIGHT ) this->grid.cursorGrid.x++;
+    if (key == KEY_LEFT ) this->grid.cursorGrid.x--;
+    // if (key > 48 && key < 58) this->replace(key);
+    // if (key == 127 || key == KEY_BACKSPACE) this->replace(48);  
+    // if (key == 10) this->showHypotheticalSolutions();
 }
 
-void choice(Sudoku &sdk)
+void Sudoku::drawHypotheticalGrid() {
+    int startRow = 17;
+    int startCol = 0;
+    int cellHeight = 4; // 3 lignes de texte + 1 ligne de bordure
+    int cellWidth = 9;  // 7 colonnes de texte + 2 colonnes de bordure (pour être large)
+
+    // 1. On dessine d'abord les petites lignes partout
+    attron(A_DIM);
+    for (int i = 0; i <= 9; i++) {
+        // Horizontales
+        for (int c = 0; c <= (9 * cellWidth); c++) 
+            mvaddch(startRow + (i * cellHeight), startCol + c, '-');
+        // Verticales
+        for (int r = 0; r <= (9 * cellHeight); r++) 
+            mvaddch(startRow + r, startCol + (i * cellWidth), '|');
+    }
+    attroff(A_DIM);
+
+    // 2. On repasse les GROS BLOCS par-dessus (Priorité absolue au #)
+    attron(A_BOLD | COLOR_PAIR(2));
+    for (int i = 0; i <= 9; i += 3) {
+        // Horizontales épaisses
+        for (int c = 0; c <= (9 * cellWidth); c++) 
+            mvaddch(startRow + (i * cellHeight), startCol + c, '#');
+        // Verticales épaisses
+        for (int r = 0; r <= (9 * cellHeight); r++) 
+            mvaddch(startRow + r, startCol + (i * cellWidth), '#');
+    }
+    attroff(A_BOLD | COLOR_PAIR(2));
+}
+
+void Sudoku::printBox(Box bx)
 {
+    // On garde tes multiplicateurs de grille (4 pour les lignes, 9 pour les colonnes)
+    int row = (bx.coordonnes.y * 4) + 17;
+    int col = (bx.coordonnes.x * 9);
+
+    bx.possibilities.push_back(5);
+    bx.possibilities.push_back(7);
+    vector<int>::iterator itb = bx.possibilities.begin();
+    vector<int>::iterator ite = bx.possibilities.end();
+
+    if (bx.answer != 0) {
+        attron(A_BOLD | COLOR_PAIR(2));
+        // CHIFRE : row+2 est le milieu vertical, col+4 est le milieu horizontal exact
+        mvprintw(row + 2, col + 4, "%d", bx.answer);
+        attroff(A_BOLD | COLOR_PAIR(2));
+    } else {
+        attron(COLOR_PAIR(1));
+        int i = 0;
+        int j = 0;
+        for (int count = 0; count < 9; count++) {
+
+            if (std::find(itb, ite, count) != ite)
+            {
+                mvprintw(row + (i % 3) + 1, col + j + 2, "%d", count);
+            }
+            else
+            {
+                mvprintw(row + (i % 3) + 1, col + j + 2, " ");
+            }
+            i++;
+            if (i % 3 == 0) {
+                j += 2; // On décale de 2 colonnes vers la droite
+                i = 0;
+            }
+        }
+        attroff(COLOR_PAIR(1));
+    }
+}
+
+void Sudoku::showHypotheticalSolutions()
+{
+    int tempX = this->grid.cursorGrid.x;
+    int tempY = this->grid.cursorGrid.y;
+    int x = 17;
+    int y = 0;
+    // this->grid.cursorGrid.x = x; // pour le curseru plus tard
+    // this->grid.cursorGrid.y = y;
+
     curs_set(1);
-    int cursorX = 5;
-    int cursorY = 30;
+    this->showGrid(false);
+    
+    // Style du titre
+    attron(A_BOLD |A_UNDERLINE | COLOR_PAIR(2)); // Titre en vert par exemple
+    mvprintw(15, 10, "    HYPOTHETICAL SOLUTIONS   \n\n"); 
+    attroff(A_BOLD | A_UNDERLINE | COLOR_PAIR(2));
 
-    attron(A_BOLD | COLOR_PAIR(1));
-    move(1, 30); printw("MENU\n");
-    move(4, 30); printw("=== RESOUDRE ===\n");
-    move(5, 30); printw("A. Entrez un chiffre (1-9): \n");
-    move(6, 30); printw("=== AUTRES ===\n");
-    move(7, 30); printw("A.Voir les hypotheses\n");
-    move(8, 30); printw("B.Modifier les hypotheses\n");
-    move(9, 30); printw("C.Reponses\n");
-    move(11, 30); printw("q pour quitter\n");
-    move(5, 57);
-    attroff(A_BOLD | COLOR_PAIR(1));
-    int number = -1;
+    // move(this->grid.cursorGrid.x * 4, this->grid.cursorGrid.y * 4);
+    
+    for (Box box: this->grid.cell) this->printBox(box);
+    this->drawHypotheticalGrid();
+    
     while (true)
     {
         refresh();
-        int key = getch(); // On attend la saisie
-        
-        if (key == KEY_UP && cursorX > 5)
-        {
-            cursorX--;
-            if (cursorX == 6) cursorX--;
-        }
-        if (key == KEY_DOWN && cursorX < 9)
-        {
-            cursorX++;
-            if (cursorX == 6) cursorX++;
-        }
-        cursorY = cursorX == 5 ? 57 : 30;
-        if ('0' < key  && key < '9' && cursorX == 5)
-        {
-            printw("%c", char(key));
-            number = key;
-        }
-        if (key == 10 && number != -1)
-        {
-            replace(number, sdk);
-            return ;
-        }
-        move(cursorX, cursorY);
-
-        if (key =='q')
-        {
-            return; // quitte la deuxime fois
-        }
+        int key = getch(); 
+        if (key =='q') break;
+        this->actionsHypothetical(key);
+        move(this->grid.cursorGrid.y * 4 + 17 + 2, this->grid.cursorGrid.x * 9 + 4);
     }
     curs_set(0);
-}
-
-int main(int argc, char *argv[])
+    this->grid.cursorGrid.x = tempX;
+    this->grid.cursorGrid.y = tempY;
+}   
+                    
+void Sudoku::replace(int key)
 {
+    int x = this->grid.cursorGrid.x;
+    int y = this->grid.cursorGrid.y;
 
-    init_game();
-    Sudoku sdk;
-    // touchwin(stdscr); // Force ncurses à redessiner CHAQUE pixel au prochain refresh
-    sdk.init_grid(easy_grid);
-    sdk.grid.cursorX = 0;
-    sdk.grid.cursorY = 0;
-    // sdk.get_grid(false);
-    attron(A_BOLD | COLOR_PAIR(1));
-    printw("Bienvenue au CLI Sudoku\nAppuyez sur ");
-    attroff(A_BOLD | COLOR_PAIR(1));
-
-    attron(A_BOLD | COLOR_PAIR(2));
-    printw("espace");
-    attroff(A_BOLD | COLOR_PAIR(2));
-    
-    attron(A_BOLD | COLOR_PAIR(1));
-    printw(" pour commencer\n");
-
-    while (1)
-    {
-        int key = getch(); // On attend l'événement clavier
-        erase();
-        if (key == KEY_UP && sdk.grid.cursorY > 0) sdk.grid.cursorY--;
-        if (key == KEY_DOWN && sdk.grid.cursorY < 8) sdk.grid.cursorY++;
-        if (key == KEY_RIGHT && sdk.grid.cursorX < 8) sdk.grid.cursorX++;
-        if (key == KEY_LEFT && sdk.grid.cursorX > 0) sdk.grid.cursorX--;
-        if (key == 10)
-        {
-            // clear();
-            sdk.get_grid(true, sdk.grid.cursorX, sdk.grid.cursorY);
-            choice(sdk);
-            curs_set(0);           // Cache le curseur clignotant du terminal (optionnel)
-            // move(sdk.grid.cursorX, sdk.grid.cursorY);
-            // clear();
-        }
-        sdk.get_grid(false, sdk.grid.cursorX, sdk.grid.cursorY);
-
-    }
-    return 0;
+    int index = y * 9 + x;
+    if (this->grid.cell[index].canDelete == true) this->grid.cell[index].answer = key - '0'; // Convertit le char en int
 }
 
-// chaque case: chiffre definitif
+
+void Sudoku::actionsKey(int key)
+{
+    if (key == KEY_UP && this->grid.cursorGrid.y > 0) this->grid.cursorGrid.y--;
+    if (key == KEY_DOWN && this->grid.cursorGrid.y < 8) this->grid.cursorGrid.y++;
+    if (key == KEY_RIGHT && this->grid.cursorGrid.x < 8) this->grid.cursorGrid.x++;
+    if (key == KEY_LEFT && this->grid.cursorGrid.x > 0) this->grid.cursorGrid.x--;
+    if (key > 48 && key < 58) this->replace(key);
+    if (key == 127 || key == KEY_BACKSPACE) this->replace(48);  
+    if (key == 10) this->showHypotheticalSolutions();
+}
+
+

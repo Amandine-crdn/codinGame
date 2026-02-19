@@ -4,45 +4,58 @@ using namespace std;
 #include <stdio.h>
 #include <iostream>
 #include <vector>
+#include <curses.h>
+#include <locale.h>
+#include <algorithm>
+
+#define KEY_ESC 27
 
 class Sudoku 
 {
-    // private:
+    // private:?
     public:
-
-        struct Point
-        {
-            int x;
-            int y;
-        };
-
-        struct Box
-        {
-            int answer = 0;
-            vector<int> possibilities;
-            Point coordonnes;
-        };
-
-        struct GridSdk
-        {
-            vector<Box> cell;
-            int cursorX;
-            int cursorY;
-        };
-
-
-        void init_grid(vector<int> grid);
-        GridSdk grid;
-        
-    // private:
-    void replace(int key,Sudoku &sdk);
-
+    
+    struct Point
+    {
+        int x;
+        int y;
+    };
+    
+    struct Box
+    {
+        int answer;
+        vector<int> possibilities;
+        Point coordonnes;
+        bool canDelete;
+    };
+    
+    struct GridSdk
+    {
+        vector<Box> cell;
+        Point cursorGrid;
+    };
+    
+    //Attributes
+    GridSdk grid;
+    
+    //Methods
+    
+    void init_grid();
+    void replace(int key);
     void give_possibilities();
-        
-    void get_grid(bool isInMenu, int cursorX, int cursorYbool);
-   
+    void actionsKey(int key);
+    void showHypotheticalSolutions();
+    void showGrid(bool isInMenu);
+    void actionsHypothetical(int key);
+    void printBox(Box bx);
+    void drawHypotheticalGrid();
 
 };
 
+void init_game();
+void showMenu();
+void showRules();
+void showMenu2();
+extern vector<int> levelGrid;
 
 #endif

@@ -56,10 +56,12 @@ void init_game()
     setlocale(LC_ALL, ""); // Pour supporter les caractères spéciaux comme les lignes de ta grille
     initscr();             // Initialise la mémoire de l'écran
     start_color();
-    init_pair(1, COLOR_WHITE, COLOR_BLACK);   // Curseur normal
-    init_pair(2, COLOR_GREEN, COLOR_BLACK);   // Bon (Chiffre vert)
-    init_pair(3, COLOR_WHITE, COLOR_MAGENTA); // Mode saisie (Rose)
+    init_pair(1, COLOR_GREEN, COLOR_BLACK);   // Curseur normal
+    init_pair(2, COLOR_CYAN, COLOR_BLACK);   // Bon (Chiffre vert)
+    init_pair(3, COLOR_YELLOW, COLOR_BLACK); // Mode saisie (Rose)
     init_pair(4, COLOR_RED, COLOR_BLACK);     // Erreur (Chiffre rouge)
+    init_pair(5, COLOR_WHITE, COLOR_BLACK);   // Curseur normal
+    init_pair(6, COLOR_MAGENTA, COLOR_BLACK);   // Curseur normal
  
     // --- LE SECRET EST ICI ---
     wbkgd(stdscr, COLOR_PAIR(1)); // Applique le fond noir à toute la fenêtre

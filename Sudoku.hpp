@@ -33,23 +33,23 @@ class Sudoku
     {
         vector<Box> cell;
         Point cursorGrid;
+        bool modeHypothetical;
     };
     
     //Attributes
     GridSdk grid;
     
     //Methods
-    
     void init_grid();
     void replace(int key);
     void give_possibilities();
     void actionsKey(int key);
     void showHypotheticalSolutions();
-    void showGrid(bool isInMenu);
+    void showGrid();
     void actionsHypothetical(int key);
     void printBox(Box bx);
     void drawHypotheticalGrid();
-
+    void direction(int key);
 };
 
 void init_game();
